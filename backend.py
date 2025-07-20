@@ -1,14 +1,23 @@
 from firecrawl import FirecrawlApp
 from bs4 import BeautifulSoup
 from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
+import os
 import json
 
-# Init
-firecrawl_app = FirecrawlApp(api_key="fc-3ffe1575a20a4702bf710dc8ae4a43b0")
+
+FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+
+firecrawl_app = FirecrawlApp(api_key=FIRECRAWL_API_KEY)
+
 openrouter_client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",
+    api_key=OPENROUTER_API_KEY,
 )
+
 
 def scrape_and_clean(url):
     try:
@@ -19,23 +28,37 @@ def scrape_and_clean(url):
     except Exception as e:
         return None
 
-def ask_llm(question, context):
+def ask_llm_fixed_schema(question, urls, contents):
     try:
-        prompt = (
-            "You are a tech analyst assistant. Respond ONLY with valid JSON format. "
-            "Structure your response as a JSON object or array with key-value pairs. "
-            "Do not include any text before or after the JSON. "
-            f"Context: {context}\n\nQuestion: {question}"
-        )
+        prompt = f"""
+You are an AI assistant comparing Amazon products. Respond strictly in valid JSON format according to the following JSON schema:
+
+```json
+{{
+  "products": [
+    // Extract product info from the following web page texts.
+  ],
+  "comparisonSummary": {{
+    // Include comparison details like bestValue, best dicount.
+  }}
+}}
+
+Each product must have: asin, title, url, price (amount, currency), rating (average, count). Add features, brand, dimensions, pros, cons, availability, etc., if available.
+
+DO NOT wrap the JSON in code fences.
+DO NOT add explanations.
+ONLY output pure JSON, conforming to the structure above.
+Use the following data:
+"""
+
+        for i, (url, content) in enumerate(zip(urls, contents)):
+            prompt += f"\n### Product {i+1}: {url}\n{content[:1500]}\n"
+
         completion = openrouter_client.chat.completions.create(
             model="meta-llama/llama-3.3-70b-instruct:free",
-            extra_headers={
-                "HTTP-Referer": "https://your-site.com",
-                "X-Title": "ScraperLLM",
-            },
             messages=[
-                {"role": "system", "content": "You are a helpful tech assistant who responds ONLY in valid JSON format. No markdown, no explanations, just pure JSON."},
-                {"role": "user", "content": prompt}
+                {"role": "system", "content": "Respond only with a valid JSON object as per the schema."},
+                {"role": "user", "content": prompt.strip()}
             ]
         )
         return completion.choices[0].message.content
