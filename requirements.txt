@@ -1,0 +1,5 @@
+streamlit
+openai
+firecrawl
+beautifulsoup4
+pandas
