@@ -36,6 +36,11 @@ FIRECRAWL_API_KEY=your_key
 OPENROUTER_API_KEY=your_key
 ```
 
+## Developer
+     Shivam Chaudhary
+    GitHub: shivamcy
+
+    “Wearing the straw hat while building Grand Line Exchange ☠️”
 
 
 
