@@ -37,7 +37,7 @@ OPENROUTER_API_KEY=your_key
 ```
 
 ## Developer
-     Shivam Chaudhary
+    Shivam Chaudhary
     GitHub: shivamcy
 
     “Wearing the straw hat while building Grand Line Exchange ☠️”
