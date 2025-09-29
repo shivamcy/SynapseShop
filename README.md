@@ -15,7 +15,7 @@ This is an AI-powered product comparison tool built with **Streamlit**, which sc
 ---
 
 ## 🖼️ Demo Output
-
+<img width="1150" height="702" alt="Screenshot 2025-07-21 at 5 59 05 PM" src="https://github.com/user-attachments/assets/ca6c760a-5c85-43c3-b012-9ef70ff6eab0" />
 
 ---
 
@@ -40,7 +40,7 @@ OPENROUTER_API_KEY=your_key
     Shivam Chaudhary
     GitHub: shivamcy
 
-    “Wearing the straw hat while building Grand Line Exchange ☠️”
+    
 
 
 
